@@ -1,0 +1,53 @@
+-- Database untuk Smart Door Lock System
+CREATE DATABASE IF NOT EXISTS monitoring_smartdoor;
+USE monitoring_smartdoor;
+
+-- Tabel Pengguna
+CREATE TABLE IF NOT EXISTS pengguna (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    reset_token VARCHAR(255) NULL,
+    reset_expiry DATETIME NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Tabel Log Aktivitas
+CREATE TABLE IF NOT EXISTS log_aktivitas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    kartu_id VARCHAR(50) NOT NULL,
+    pengguna VARCHAR(100) NOT NULL,
+    status ENUM('berhasil', 'gagal', 'pending') DEFAULT 'berhasil',
+    keterangan VARCHAR(255) DEFAULT 'Akses Pintu',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabel Kartu (opsional untuk manajemen kartu)
+CREATE TABLE IF NOT EXISTS kartu (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    kartu_id VARCHAR(50) UNIQUE NOT NULL,
+    nama_pemilik VARCHAR(100) NOT NULL,
+    status ENUM('aktif', 'nonaktif', 'suspend') DEFAULT 'aktif',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Insert admin default (password: admin123)
+INSERT IGNORE INTO pengguna (email, password_hash) VALUES 
+('admin@smartdoor.com', '$2b$10$rQJ5txKGQP4OXhUaKa4yHOQI7VXW8dY2CUFz/hJ3PzGqA4mZKV7bO');
+
+-- Insert sample data log aktivitas
+INSERT IGNORE INTO log_aktivitas (kartu_id, pengguna, status, keterangan) VALUES 
+('CARD001', 'John Doe', 'berhasil', 'Akses Masuk'),
+('CARD002', 'Jane Smith', 'berhasil', 'Akses Keluar'),
+('CARD003', 'Unknown User', 'gagal', 'Kartu Tidak Dikenal'),
+('CARD001', 'John Doe', 'berhasil', 'Akses Masuk'),
+('CARD004', 'Bob Wilson', 'gagal', 'Akses Ditolak');
+
+-- Insert sample kartu
+INSERT IGNORE INTO kartu (kartu_id, nama_pemilik, status) VALUES 
+('CARD001', 'John Doe', 'aktif'),
+('CARD002', 'Jane Smith', 'aktif'),
+('CARD003', 'Unknown User', 'nonaktif'),
+('CARD004', 'Bob Wilson', 'suspend');

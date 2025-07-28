@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Door Lock</title>
+    <link rel="stylesheet" href="./styles/output.css" />
+    <!-- Font Google untuk tampilan lebih elegan -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col antialiased">
+    <!-- HEADER -->
+    <header
+      class="bg-white/90 backdrop-blur-sm p-4 flex justify-between items-center border-b border-gray-200 shadow-sm"
+    >
+      <h1 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+        <span class="text-red-500">🔒</span>
+        Smart Door Lock
+      </h1>
+      <div class="flex items-center gap-3">
+        <span id="userEmail" class="text-sm text-gray-600"></span>
+        <button
+          id="logoutBtn"
+          class="text-sm bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-lg font-semibold transition duration-200 shadow-sm hover:shadow"
+        >
+          Logout
+        </button>
+        <span class="text-gray-500 text-xl">👤</span>
+      </div>
+    </header>
+
+    <div class="flex flex-1">
+      <!-- SIDEBAR -->
+      <aside class="w-60 bg-white border-r border-gray-200 shadow-sm">
+        <nav class="flex flex-col p-4 gap-1">
+          <a
+            href="dashboard.html"
+            class="flex items-center gap-3 px-3 py-3 text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl font-medium shadow-sm transition"
+          >
+            🏠 Beranda
+          </a>
+          <a
+            href="log_activity.html"
+            class="flex items-center gap-3 px-3 py-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-xl font-medium transition"
+          >
+            📝 Log Activity
+          </a>
+          <a
+            href="history.html"
+            class="flex items-center gap-3 px-3 py-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-xl font-medium transition"
+          >
+            ⌚ History
+          </a>
+        </nav>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="flex-1 p-6 bg-gray-50">
+        <h2
+          class="text-2xl font-semibold mb-6 text-gray-900 flex items-center gap-2"
+        >
+          <span class="text-blue-600">🏠</span>
+          Dashboard Overview
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+          <!-- STATUS PINTU -->
+          <div
+            class="bg-white p-5 rounded-xl border border-gray-200 text-center shadow-sm hover:shadow transition"
+          >
+            <p class="text-lg font-medium text-gray-700">Status Pintu</p>
+            <p id="statusPintu" class="text-2xl font-bold text-green-600 mt-1">
+              Tertutup
+            </p>
+          </div>
+
+          <!-- JUMLAH AKSES -->
+          <div
+            class="bg-white p-5 rounded-xl border border-gray-200 text-center shadow-sm hover:shadow transition"
+          >
+            <p class="text-sm text-gray-500 font-medium">Akses Hari Ini</p>
+            <p id="aksesHariIni" class="text-3xl font-bold text-gray-900 mt-1">
+              -
+            </p>
+          </div>
+
+          <!-- WAKTU AKSES -->
+          <div
+            class="bg-white p-5 rounded-xl border border-gray-200 text-center shadow-sm hover:shadow transition"
+          >
+            <p class="text-sm text-gray-500 font-medium">Akses Terakhir</p>
+            <p id="doorTime" class="text-base text-gray-600 mt-1">12:30:45</p>
+          </div>
+        </div>
+
+        <!-- GRAFIK AKSES -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <!-- Grafik Akses Mingguan -->
+          <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+              📊 Akses 7 Hari Terakhir
+            </h3>
+            <div class="w-full h-64">
+              <canvas id="weeklyChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Grafik Status Akses -->
+          <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+              📈 Status Akses Hari Ini
+            </h3>
+            <div class="w-full h-64">
+              <canvas id="statusChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- AKTIVITAS TERBARU -->
+        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">
+            🕒 Aktivitas Terbaru
+          </h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead class="bg-gray-50 text-gray-700 text-sm font-semibold">
+                <tr>
+                  <th class="p-3 border-b border-gray-200">Waktu</th>
+                  <th class="p-3 border-b border-gray-200">Pengguna</th>
+                  <th class="p-3 border-b border-gray-200">ID Kartu</th>
+                  <th class="p-3 border-b border-gray-200">Status</th>
+                </tr>
+              </thead>
+              <tbody
+                id="recentActivityBody"
+                class="text-gray-800 divide-y divide-gray-100"
+              >
+                <!-- Data akan diisi oleh JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- FOOTER -->
+    <footer
+      class="bg-white/90 backdrop-blur-sm text-center text-sm text-gray-500 py-2 border-t border-gray-200"
+    >
+      © 2025 Smart Door Lock System
+    </footer>
+
+    <!-- SCRIPT -->
+    <script src="../src/dashboard.js"></script>
+  </body>
+</html>
