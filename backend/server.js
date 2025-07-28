@@ -2,12 +2,16 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+<<<<<<< HEAD
 const path = require("path");
+=======
+>>>>>>> 0c634be8b03575a29b348b2bcb5baba0bcb89cda
 
 const authRoutes = require("./routes/authRoutes");
 const doorRoutes = require("./routes/doorRoutes");
 
 const app = express();
+<<<<<<< HEAD
 
 // Middleware
 app.use(bodyParser.json());
@@ -77,3 +81,17 @@ app.listen(PORT, () => {
   console.log(`🚪 Door endpoints: http://localhost:${PORT}/api/door`);
   console.log(`✅ CORS enabled for multiple origins`);
 });
+=======
+app.use(bodyParser.json());
+app.use(cors());
+
+// Routes / Routing
+app.use("/api/auth", authRoutes);
+app.use("/api/door", doorRoutes);
+
+app.get("/", (req, res) => res.send("Smart Door API Active."));
+
+app.listen(process.env.PORT, () => {
+    console.log("Server running on http://localhost:" + process.env.PORT);
+});
+>>>>>>> 0c634be8b03575a29b348b2bcb5baba0bcb89cda

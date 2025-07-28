@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Smart Door Lock</title>
     <link rel="stylesheet" href="./styles/output.css" />
+<<<<<<< HEAD
     <!-- Font Google untuk tampilan lebih elegan -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
@@ -15,20 +16,36 @@
     <style>
       body {
         font-family: "Inter", sans-serif;
+=======
+    <!-- Opsional: Font Google untuk tampilan lebih elegan -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+>>>>>>> 0c634be8b03575a29b348b2bcb5baba0bcb89cda
       }
     </style>
   </head>
   <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col antialiased">
+<<<<<<< HEAD
     <!-- HEADER -->
     <header
       class="bg-white/90 backdrop-blur-sm p-4 flex justify-between items-center border-b border-gray-200 shadow-sm"
     >
+=======
+
+    <!-- HEADER -->
+    <header class="bg-white/90 backdrop-blur-sm p-4 flex justify-between items-center border-b border-gray-200 shadow-sm">
+>>>>>>> 0c634be8b03575a29b348b2bcb5baba0bcb89cda
       <h1 class="text-xl font-bold text-gray-900 flex items-center gap-2">
         <span class="text-red-500">🔒</span>
         Smart Door Lock
       </h1>
       <div class="flex items-center gap-3">
+<<<<<<< HEAD
         <span id="userEmail" class="text-sm text-gray-600"></span>
+=======
+>>>>>>> 0c634be8b03575a29b348b2bcb5baba0bcb89cda
         <button
           id="logoutBtn"
           class="text-sm bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-lg font-semibold transition duration-200 shadow-sm hover:shadow"
@@ -43,6 +60,7 @@
       <!-- SIDEBAR -->
       <aside class="w-60 bg-white border-r border-gray-200 shadow-sm">
         <nav class="flex flex-col p-4 gap-1">
+<<<<<<< HEAD
           <a
             href="dashboard.html"
             class="flex items-center gap-3 px-3 py-3 text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl font-medium shadow-sm transition"
@@ -59,6 +77,15 @@
             href="history.html"
             class="flex items-center gap-3 px-3 py-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-xl font-medium transition"
           >
+=======
+          <a href="dashboard.html" class="flex items-center gap-3 px-3 py-3 text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl font-medium shadow-sm transition">
+            🏠 Beranda
+          </a>
+          <a href="log_activity.html" class="flex items-center gap-3 px-3 py-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-xl font-medium transition">
+            📝 Log Activity
+          </a>
+          <a href="history.html" class="flex items-center gap-3 px-3 py-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-xl font-medium transition">
+>>>>>>> 0c634be8b03575a29b348b2bcb5baba0bcb89cda
             ⌚ History
           </a>
         </nav>
@@ -66,15 +93,20 @@
 
       <!-- MAIN CONTENT -->
       <main class="flex-1 p-6 bg-gray-50">
+<<<<<<< HEAD
         <h2
           class="text-2xl font-semibold mb-6 text-gray-900 flex items-center gap-2"
         >
+=======
+        <h2 class="text-2xl font-semibold mb-6 text-gray-900 flex items-center gap-2">
+>>>>>>> 0c634be8b03575a29b348b2bcb5baba0bcb89cda
           <span class="text-blue-600">🏠</span>
           Dashboard Overview
         </h2>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
           <!-- STATUS PINTU -->
+<<<<<<< HEAD
           <div
             class="bg-white p-5 rounded-xl border border-gray-200 text-center shadow-sm hover:shadow transition"
           >
@@ -99,11 +131,28 @@
             class="bg-white p-5 rounded-xl border border-gray-200 text-center shadow-sm hover:shadow transition"
           >
             <p class="text-sm text-gray-500 font-medium">Akses Terakhir</p>
+=======
+          <div class="bg-white p-5 rounded-xl border border-gray-200 text-center shadow-sm hover:shadow transition">
+            <p class="text-lg font-medium text-gray-700">Status Pintu</p>
+            <p id="statusPintu" class="text-2xl font-bold text-green-600 mt-1">Tertutup</p>
+          </div>
+
+          <!-- JUMLAH AKSES -->
+          <div class="bg-white p-5 rounded-xl border border-gray-200 text-center shadow-sm hover:shadow transition">
+            <p class="text-sm text-gray-500 font-medium">Akses Hari Ini</p>
+            <p id="aksesHariIni" class="text-3xl font-bold text-gray-900 mt-1">-</p>
+          </div>
+
+          <!-- WAKTU AKSES -->
+          <div class="bg-white p-5 rounded-xl border border-gray-200 text-center shadow-sm hover:shadow transition">
+            <p class="text-sm text-gray-500 font-medium">Riwayat Terakhir</p>
+>>>>>>> 0c634be8b03575a29b348b2bcb5baba0bcb89cda
             <p id="doorTime" class="text-base text-gray-600 mt-1">12:30:45</p>
           </div>
         </div>
 
         <!-- GRAFIK AKSES -->
+<<<<<<< HEAD
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <!-- Grafik Akses Mingguan -->
           <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
@@ -148,19 +197,33 @@
                 <!-- Data akan diisi oleh JavaScript -->
               </tbody>
             </table>
+=======
+        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">📊 Akses Mingguan</h3>
+          <div class="w-full h-48 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 italic">
+            [ Grafik Akses Mingguan Akan Ditampilkan di Sini ]
+>>>>>>> 0c634be8b03575a29b348b2bcb5baba0bcb89cda
           </div>
         </div>
       </main>
     </div>
 
     <!-- FOOTER -->
+<<<<<<< HEAD
     <footer
       class="bg-white/90 backdrop-blur-sm text-center text-sm text-gray-500 py-2 border-t border-gray-200"
     >
+=======
+    <footer class="bg-white/90 backdrop-blur-sm text-center text-sm text-gray-500 py-2 border-t border-gray-200">
+>>>>>>> 0c634be8b03575a29b348b2bcb5baba0bcb89cda
       © 2025 Smart Door Lock System
     </footer>
 
     <!-- SCRIPT -->
     <script src="../src/dashboard.js"></script>
   </body>
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> 0c634be8b03575a29b348b2bcb5baba0bcb89cda

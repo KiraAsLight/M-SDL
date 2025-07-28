@@ -16,7 +16,10 @@
     "cors": "^2.8.5",
     "dotenv": "^17.0.1",
     "express": "^4.18.2",
+<<<<<<< HEAD
     "jsonwebtoken": "^9.0.2",
+=======
+>>>>>>> 0c634be8b03575a29b348b2bcb5baba0bcb89cda
     "mysql2": "^3.14.1",
     "nodemailer": "^7.0.4"
   }
