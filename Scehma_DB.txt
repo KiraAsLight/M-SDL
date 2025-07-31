@@ -1,0 +1,58 @@
+-- Database untuk Smart Door Lock System
+CREATE DATABASE IF NOT EXISTS monitoring_smartdoor;
+USE monitoring_smartdoor;
+
+-- Tabel Pengguna
+CREATE TABLE IF NOT EXISTS admin (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    reset_token VARCHAR(255) NULL,
+    reset_expiry DATETIME NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Tabel Log Aktivitas
+CREATE TABLE IF NOT EXISTS log_aktivitas (
+    id_log INT AUTO_INCREMENT PRIMARY KEY,
+    kartu_id VARCHAR(50) NOT NULL,
+    nama_pengguna VARCHAR(100) NOT NULL,
+    status_log ENUM('berhasil', 'gagal', 'pending') DEFAULT 'berhasil',
+    keterangan VARCHAR(255) DEFAULT 'Terkunci',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabel Kartu (opsional untuk manajemen kartu)
+CREATE TABLE IF NOT EXISTS kartu (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    kartu_id VARCHAR(50) UNIQUE NOT NULL,
+    nama_pemilik VARCHAR(100) NOT NULL,
+    status_kartu ENUM('aktif', 'nonaktif', 'suspend') DEFAULT 'aktif',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Insert admin default (password: admin123)
+INSERT IGNORE INTO admin (email, password_hash) VALUES 
+('aufamunadil9@gmail.com', '$2b$10$gvsJ2Scu9wFY3ROKkTaPaOcSX6w2b1I7Dst97wO6qF6R2ai.QMl1q');
+
+-- Insert sample data log aktivitas
+INSERT IGNORE INTO log_aktivitas (id, kartu_id, pengguna, created_at, status_log, keterangan) VALUES 
+(1, 'CARD001', 'Admin', '2025-07-20 13:15:32', 'Masuk', 'Berhasil'),
+(2, 'CARD001', 'Admin', '2025-07-20 17:20:15', 'Keluar', 'Berhasil'),
+(3, 'CARD002', 'Sekretaris', '2025-07-21 10:39:22', 'Masuk', 'Berhasil'),
+(4, 'CARD002', 'Sekretaris', '2025-07-21 11:12:40', 'Keluar', 'Berhasil'),
+(5, 'CARD003', 'Anggota', '2025-07-21 12:10:47', 'Masuk', 'Berhasil'),
+(6, 'CARD003', 'Anggota', '2025-07-21 18:04:53', 'Keluar', 'Berhasil'),
+(7, 'CARD004', 'Member tidak dikenal', '2025-07-22 10:08:30', 'Kartu Ditolak', 'Tidak Dikenal'),
+(8, 'CARD001', 'Admin', '2025-07-26 15:15:40', 'Masuk', 'Berhasil'),
+(9, 'CARD001', 'Admin', '2025-07-26 18:00:00', 'Keluar', 'Berhasil'),
+(10, 'CARD003', 'Anggota', '2025-07-26 18:25:40', 'Masuk', 'Gagal');
+
+-- Insert sample kartu
+INSERT IGNORE INTO kartu (idkartu_id, nama_pemilik, status_kartu, created_at, updated_at) VALUES 
+(1, 'CARD001', 'Admin', 'aktif', '2025-07-19 22:00:10', '2025-07-20 09:20:50'),
+(2, 'CARD002', 'Sekretaris', 'aktif', '2025-07-21 02:15:00', '2025-07-21 06:25:40'),
+(3, 'CARD003', 'Anggota', 'aktif', '2025-07-21 03:25:40', '2025-07-26 11:22:41'),
+(4, 'CARD004', 'Unknown Member', 'nonaktif', '2025-07-25 08:20:40', '2025-07-26 10:41:21');

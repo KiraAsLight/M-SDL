@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>History & Reports</title>
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="./styles/output.css" />
+    <!-- Font Elegant -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- jsPDF Library for PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .loading {
+        display: none;
+      }
+      .loading.active {
+        display: inline-block;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .spinner {
+        animation: spin 1s linear infinite;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #3498db;
+        border-radius: 50%;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col antialiased">
+    <!-- HEADER -->
+    <header
+      class="bg-white/90 backdrop-blur-sm p-4 flex justify-between items-center border-b border-gray-200 shadow-sm"
+    >
+      <h1 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+        <span class="text-red-500">🔒</span>
+        Smart Door Lock
+      </h1>
+      <div class="flex items-center gap-3">
+        <button
+          id="logoutBtn"
+          class="text-sm bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-lg font-semibold transition shadow-sm hover:shadow"
+        >
+          Logout
+        </button>
+        <span class="text-gray-500 text-xl">👤</span>
+      </div>
+    </header>
+
+    <div class="flex flex-1">
+      <!-- SIDEBAR -->
+      <aside class="w-60 bg-white border-r border-gray-200 shadow-sm">
+        <nav class="flex flex-col p-4 gap-1">
+          <a
+            href="dashboard.html"
+            class="flex items-center gap-3 px-3 py-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-xl font-medium transition"
+          >
+            🏠 Beranda
+          </a>
+          <a
+            href="history.html"
+            class="flex items-center gap-3 px-3 py-3 text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl font-medium shadow-sm transition"
+          >
+            📊 History & Reports
+          </a>
+          <a
+            href="cards.html"
+            class="flex items-center gap-3 px-3 py-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-xl font-medium transition"
+          >
+            💳 Kartu RFID
+          </a>
+          <a
+            href="remote_control.html"
+            class="flex items-center gap-3 px-3 py-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-xl font-medium transition"
+          >
+            🎮 Remote Control
+          </a>
+        </nav>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="flex-1 p-6 bg-gray-50">
+        <div class="flex justify-between items-center mb-6">
+          <h2
+            class="text-2xl font-semibold text-gray-900 flex items-center gap-2"
+          >
+            📊 History & Reports
+          </h2>
+          <div class="flex gap-3">
+            <button
+              id="exportPdfBtn"
+              class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition shadow-sm hover:shadow flex items-center gap-2"
+            >
+              📄 Export PDF
+              <div class="loading spinner"></div>
+            </button>
+            <button
+              id="refreshBtn"
+              class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition shadow-sm hover:shadow"
+            >
+              🔄 Refresh
+            </button>
+          </div>
+        </div>
+
+        <!-- STATISTICS CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+          <div
+            class="bg-white p-4 rounded-xl border border-gray-200 text-center shadow-sm"
+          >
+            <p class="text-sm text-gray-500 font-medium">Total Records</p>
+            <p id="totalRecords" class="text-2xl font-bold text-gray-900 mt-1">
+              -
+            </p>
+          </div>
+          <div
+            class="bg-white p-4 rounded-xl border border-gray-200 text-center shadow-sm"
+          >
+            <p class="text-sm text-gray-500 font-medium">Successful Access</p>
+            <p
+              id="successfulAccess"
+              class="text-2xl font-bold text-green-600 mt-1"
+            >
+              -
+            </p>
+          </div>
+          <div
+            class="bg-white p-4 rounded-xl border border-gray-200 text-center shadow-sm"
+          >
+            <p class="text-sm text-gray-500 font-medium">Failed Attempts</p>
+            <p id="failedAttempts" class="text-2xl font-bold text-red-600 mt-1">
+              -
+            </p>
+          </div>
+          <div
+            class="bg-white p-4 rounded-xl border border-gray-200 text-center shadow-sm"
+          >
+            <p class="text-sm text-gray-500 font-medium">Unique Users</p>
+            <p id="uniqueUsers" class="text-2xl font-bold text-blue-600 mt-1">
+              -
+            </p>
+          </div>
+        </div>
+
+        <!-- ADVANCED FILTERS -->
+        <div
+          class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-6"
+        >
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">
+            🔍 Advanced Filters
+          </h3>
+
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4"
+          >
+            <!-- Date Range Filter -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Date Range</label
+              >
+              <div class="flex gap-2">
+                <input
+                  type="date"
+                  id="startDate"
+                  class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  type="date"
+                  id="endDate"
+                  class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            <!-- User Filter -->
+            <div>
+              <label
+                for="userFilter"
+                class="block text-sm font-medium text-gray-700 mb-2"
+                >User Name</label
+              >
+              <input
+                type="text"
+                id="userFilter"
+                placeholder="Search by user name..."
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <!-- Card ID Filter -->
+            <div>
+              <label
+                for="cardFilter"
+                class="block text-sm font-medium text-gray-700 mb-2"
+                >Card ID</label
+              >
+              <input
+                type="text"
+                id="cardFilter"
+                placeholder="Search by card ID..."
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <!-- Status Filter -->
+            <div>
+              <label
+                for="statusFilter"
+                class="block text-sm font-medium text-gray-700 mb-2"
+                >Access Status</label
+              >
+              <select
+                id="statusFilter"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">All Status</option>
+                <option value="berhasil">Successful</option>
+                <option value="gagal">Failed</option>
+                <option value="pending">Pending</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Quick Date Filters -->
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span class="text-sm font-medium text-gray-700"
+              >Quick Filters:</span
+            >
+            <button
+              id="todayFilter"
+              class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm hover:bg-blue-200 transition"
+            >
+              Today
+            </button>
+            <button
+              id="weekFilter"
+              class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm hover:bg-blue-200 transition"
+            >
+              This Week
+            </button>
+            <button
+              id="monthFilter"
+              class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm hover:bg-blue-200 transition"
+            >
+              This Month
+            </button>
+            <button
+              id="lastMonthFilter"
+              class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm hover:bg-blue-200 transition"
+            >
+              Last Month
+            </button>
+            <button
+              id="clearFilters"
+              class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition"
+            >
+              Clear All
+            </button>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex gap-3">
+            <button
+              id="applyFilters"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition shadow-sm hover:shadow"
+            >
+              🔍 Apply Filters
+            </button>
+            <button
+              id="generateReport"
+              class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition shadow-sm hover:shadow"
+            >
+              📈 Generate Report
+            </button>
+          </div>
+        </div>
+
+        <!-- RESULTS INFO -->
+        <div
+          class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm mb-4"
+        >
+          <div class="flex justify-between items-center">
+            <div>
+              <span id="resultsInfo" class="text-sm text-gray-600"
+                >Loading data...</span
+              >
+            </div>
+            <div class="flex items-center gap-4">
+              <label for="recordsPerPage" class="text-sm text-gray-600"
+                >Records per page:</label
+              >
+              <select
+                id="recordsPerPage"
+                class="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="25">25</option>
+                <option value="50" selected>50</option>
+                <option value="100">100</option>
+                <option value="all">All</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- HISTORY TABLE -->
+        <div
+          class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden"
+        >
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead class="bg-gray-50 text-gray-700 text-sm font-semibold">
+                <tr>
+                  <th class="p-4 border-b border-gray-200">
+                    <input type="checkbox" id="selectAll" class="rounded" />
+                  </th>
+                  <th
+                    class="p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100"
+                    data-sort="created_at"
+                  >
+                    Date & Time
+                    <span class="sort-indicator">↕️</span>
+                  </th>
+                  <th
+                    class="p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100"
+                    data-sort="pengguna"
+                  >
+                    User
+                    <span class="sort-indicator">↕️</span>
+                  </th>
+                  <th
+                    class="p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100"
+                    data-sort="kartu_id"
+                  >
+                    Card ID
+                    <span class="sort-indicator">↕️</span>
+                  </th>
+                  <th
+                    class="p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100"
+                    data-sort="status"
+                  >
+                    Status
+                    <span class="sort-indicator">↕️</span>
+                  </th>
+                  <th class="p-4 border-b border-gray-200">Description</th>
+                  <th class="p-4 border-b border-gray-200">Actions</th>
+                </tr>
+              </thead>
+              <tbody
+                id="historyTableBody"
+                class="text-gray-800 divide-y divide-gray-100"
+              >
+                <!-- Data akan diisi oleh JavaScript -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div
+            id="pagination"
+            class="bg-gray-50 px-4 py-3 border-t border-gray-200 flex items-center justify-between"
+          >
+            <div class="text-sm text-gray-700">
+              Showing <span id="showingFrom">0</span> to
+              <span id="showingTo">0</span> of
+              <span id="totalEntries">0</span> entries
+            </div>
+            <div class="flex gap-1">
+              <button
+                id="prevPage"
+                class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100 disabled:opacity-50"
+              >
+                Previous
+              </button>
+              <div id="pageNumbers" class="flex gap-1"></div>
+              <button
+                id="nextPage"
+                class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100 disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- DETAIL MODAL -->
+    <div
+      id="detailModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50"
+    >
+      <div class="bg-white p-6 rounded-xl max-w-md w-full mx-4">
+        <h3 class="text-xl font-semibold text-gray-900 mb-4">Access Details</h3>
+
+        <div id="modalContent" class="space-y-3">
+          <!-- Content akan diisi oleh JavaScript -->
+        </div>
+
+        <div class="flex gap-3 pt-4">
+          <button
+            id="closeModal"
+            class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 rounded-lg font-medium transition"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer
+      class="bg-white/90 backdrop-blur-sm text-center text-sm text-gray-500 py-2 border-t border-gray-200"
+    >
+      © 2025 Smart Door Lock System - History & Reports
+    </footer>
+
+    <!-- SCRIPT -->
+    <script src="../src/unified_history.js"></script>
+  </body>
+</html>
