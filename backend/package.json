@@ -1,26 +1,34 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Smart Door Lock System Backend API",
+  "main": "server.js",
   "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["smart-door", "rfid", "security", "iot", "express"],
+  "author": "Smart Door Lock Team",
   "license": "ISC",
   "type": "commonjs",
-  "description": "",
   "dependencies": {
-    "bcrypt": "^6.0.0",
-    "body-parser": "^2.2.0",
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
-    "dotenv": "^17.0.1",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
-<<<<<<< HEAD
+    "express-validator": "^7.0.1",
     "jsonwebtoken": "^9.0.2",
-=======
->>>>>>> 0c634be8b03575a29b348b2bcb5baba0bcb89cda
-    "mysql2": "^3.14.1",
-    "nodemailer": "^7.0.4"
+    "mysql2": "^3.6.3",
+    "nodemailer": "^6.9.7",
+    "ws": "^8.14.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
   }
 }

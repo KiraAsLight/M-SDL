@@ -1,3 +1,4 @@
+// backend/routes/hardwareRoutes.js
 const express = require('express');
 const router = express.Router();
 const hardwareController = require('../controllers/hardwareController');

@@ -4,12 +4,13 @@ const jwt = require("jsonwebtoken");
 const db = require("../config/db");
 const { sendResetEmail } = require("../utils/mailer");
 
-// Untuk Login User / Admin dengan JWT
+// Untuk Login User / Admin dengan JWT - FIXED
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const [rows] = await db.query("SELECT * FROM pengguna WHERE email = ?", [
+    // Fixed: Query to 'admin' table instead of 'pengguna'
+    const [rows] = await db.query("SELECT * FROM admin WHERE email = ?", [
       email,
     ]);
 
@@ -42,7 +43,7 @@ exports.login = async (req, res) => {
   }
 };
 
-// Untuk Request Reset Password
+// Untuk Request Reset Password - FIXED
 exports.requestReset = async (req, res) => {
   const { email } = req.body;
 
@@ -50,19 +51,21 @@ exports.requestReset = async (req, res) => {
     const token = crypto.randomBytes(32).toString("hex");
     const expiry = new Date(Date.now() + 3600000); // 1 hour
 
-    const [rows] = await db.query("SELECT * FROM pengguna WHERE email = ?", [
+    // Fixed: Query to 'admin' table
+    const [rows] = await db.query("SELECT * FROM admin WHERE email = ?", [
       email,
     ]);
     if (rows.length === 0)
       return res.status(404).json({ message: "User not found." });
 
+    // Fixed: Update 'admin' table
     await db.query(
-      "UPDATE pengguna SET reset_token = ?, reset_expiry = ? WHERE email = ?",
+      "UPDATE admin SET reset_token = ?, reset_expiry = ? WHERE email = ?",
       [token, expiry, email]
     );
 
     await sendResetEmail(email, token);
-    res.json({ message: "Reset email sent." });
+    res.json({ message: "Reset email sent.", token: token }); // Include token in response for frontend
   } catch (err) {
     res
       .status(500)
@@ -70,13 +73,14 @@ exports.requestReset = async (req, res) => {
   }
 };
 
-// Untuk Validasi Token
+// Untuk Validasi Token - FIXED
 exports.validateToken = async (req, res) => {
   const { token } = req.params;
 
   try {
+    // Fixed: Query to 'admin' table
     const [rows] = await db.query(
-      "SELECT * FROM pengguna WHERE reset_token = ? AND reset_expiry > NOW()",
+      "SELECT * FROM admin WHERE reset_token = ? AND reset_expiry > NOW()",
       [token]
     );
 
@@ -90,22 +94,25 @@ exports.validateToken = async (req, res) => {
   }
 };
 
-// Untuk Reset Password
+// Untuk Reset Password - FIXED
 exports.resetPassword = async (req, res) => {
   const { token } = req.params;
   const { newPassword } = req.body;
 
   try {
+    // Fixed: Query to 'admin' table
     const [rows] = await db.query(
-      "SELECT * FROM pengguna WHERE reset_token = ? AND reset_expiry > NOW()",
+      "SELECT * FROM admin WHERE reset_token = ? AND reset_expiry > NOW()",
       [token]
     );
     if (rows.length === 0)
       return res.status(404).json({ message: "Invalid or expired token." });
 
     const hashed = await bcrypt.hash(newPassword, 10);
+
+    // Fixed: Update 'admin' table
     await db.query(
-      "UPDATE pengguna SET password_hash = ?, reset_token = NULL, reset_expiry = NULL WHERE reset_token = ?",
+      "UPDATE admin SET password_hash = ?, reset_token = NULL, reset_expiry = NULL WHERE reset_token = ?",
       [hashed, token]
     );
     res.json({ message: "Password reset successful." });
@@ -113,5 +120,35 @@ exports.resetPassword = async (req, res) => {
     res
       .status(500)
       .json({ message: "Password reset failed.", error: err.message });
+  }
+};
+
+// NEW: Register function (if needed)
+exports.register = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Check if user already exists
+    const [existing] = await db.query("SELECT * FROM admin WHERE email = ?", [
+      email,
+    ]);
+    if (existing.length > 0) {
+      return res.status(409).json({ message: "Email already registered." });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    // Insert new admin
+    await db.query("INSERT INTO admin (email, password_hash) VALUES (?, ?)", [
+      email,
+      hashedPassword,
+    ]);
+
+    res.status(201).json({ message: "Admin registered successfully." });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Registration failed.", error: err.message });
   }
 };

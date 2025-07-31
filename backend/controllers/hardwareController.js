@@ -1,3 +1,4 @@
+// backend/controllers/hardwareController.js
 const db = require('../config/db');
 const socketManager = require('../websocket/socketHandler');
 

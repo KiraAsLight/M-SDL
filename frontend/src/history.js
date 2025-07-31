@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const historyTableBody = document.getElementById("historyTableBody");
 
-<<<<<<< HEAD
   // Fungsi untuk ambil semua data history (gunakan endpoint history tanpa filter)
   async function fetchAllHistory() {
     // Daripada pakai log-aktivitas yang terbatas 5 data,
@@ -13,11 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const endDate = today.toISOString().split("T")[0];
 
     const endpoint = `http://localhost:3000/api/door/history?mulai=${startDate}&sampai=${endDate}`;
-=======
-  // Fungsi untuk ambil semua data history
-  async function fetchAllHistory() {
-    const endpoint = "http://localhost:3000/api/door/log-aktivitas";
->>>>>>> 0c634be8b03575a29b348b2bcb5baba0bcb89cda
 
     try {
       const response = await fetch(endpoint);
@@ -59,7 +53,6 @@ document.addEventListener("DOMContentLoaded", () => {
         second: "2-digit",
       });
 
-<<<<<<< HEAD
       // Handle keterangan - cek apakah field ada
       let keterangan = "Akses Pintu";
       if (history.keterangan) {
@@ -85,22 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
         badgeClass = "bg-yellow-100 text-yellow-800";
       } else if (status.includes("akses")) {
         badgeClass = "bg-blue-100 text-blue-800";
-=======
-      // Ambil keterangan dari database
-      const keterangan = history.keterangan || "Akses Tidak Diketahui";
-
-      // Gunakan field `status` untuk badge (lebih akurat)
-      const status = history.status?.toLowerCase() || "pending";
-
-      // Tentukan warna badge berdasarkan `status` (enum)
-      let badgeClass = "bg-gray-100 text-gray-800"; // default
-      if (status === "berhasil" || status === "success") {
-        badgeClass = "bg-green-100 text-green-800";
-      } else if (status === "gagal" || status === "failed") {
-        badgeClass = "bg-red-100 text-red-800";
-      } else if (status === "pending") {
-        badgeClass = "bg-yellow-100 text-yellow-800";
->>>>>>> 0c634be8b03575a29b348b2bcb5baba0bcb89cda
       }
 
       const row = `
@@ -147,11 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-<<<<<<< HEAD
   // Event listener untuk form filter
-=======
-  // Event listener untuk form filter (jika ada)
->>>>>>> 0c634be8b03575a29b348b2bcb5baba0bcb89cda
   const filterForm = document.getElementById("filterForm");
   if (filterForm) {
     filterForm.addEventListener("submit", async (e) => {
@@ -179,17 +152,12 @@ document.addEventListener("DOMContentLoaded", () => {
       resetBtn.addEventListener("click", () => {
         document.getElementById("startDate").value = "";
         document.getElementById("endDate").value = "";
-<<<<<<< HEAD
         fetchAllHistory(); // Reset ke data default
-=======
-        fetchAllHistory();
->>>>>>> 0c634be8b03575a29b348b2bcb5baba0bcb89cda
       });
     }
   }
 
   // Event listener untuk logout button
-<<<<<<< HEAD
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
@@ -199,13 +167,5 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Load data history saat halaman pertama kali dibuka
-=======
-  document.getElementById("logoutBtn").addEventListener("click", () => {
-    localStorage.removeItem("token");
-    window.location.href = "./login.html";
-  });
-
-  // Load semua data saat halaman pertama kali dibuka
->>>>>>> 0c634be8b03575a29b348b2bcb5baba0bcb89cda
   fetchAllHistory();
 });
