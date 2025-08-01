@@ -65,10 +65,16 @@ const hardwareController = require("./controllers/hardwareController");
 app.post("/api/remote/door-command", hardwareController.sendDoorCommand);
 
 // Get device status
-app.get("/api/remote/device-status/:deviceId?", hardwareController.getDeviceStatus);
+app.get(
+  "/api/remote/device-status/:deviceId?",
+  hardwareController.getDeviceStatus
+);
 
 // Additional door statistics endpoint
-app.get("/api/door/statistics", require("./controllers/doorController").getActivityStats);
+app.get(
+  "/api/door/statistics",
+  require("./controllers/doorController").getActivityStats
+);
 
 // WebSocket stats endpoint
 app.get("/api/websocket/stats", (req, res) => {
@@ -84,7 +90,7 @@ app.get("/", (req, res) => {
     websocket: socketManager.getStats(),
     cors: "enabled",
     database: process.env.DB_NAME,
-    environment: process.env.NODE_ENV || "development"
+    environment: process.env.NODE_ENV || "development",
   });
 });
 
@@ -93,7 +99,8 @@ app.get("/api", (req, res) => {
   res.json({
     name: "Smart Door Lock API",
     version: "1.0.1",
-    description: "Complete API for Smart Door Lock System with RFID access control",
+    description:
+      "Complete API for Smart Door Lock System with RFID access control",
     endpoints: {
       auth: {
         "POST /api/auth/login": "User login with JWT token",
@@ -111,7 +118,8 @@ app.get("/api", (req, res) => {
         "POST /api/hardware/rfid-scan": "Handle RFID card scan from Arduino",
         "POST /api/hardware/vibration-alert": "Handle vibration sensor alerts",
         "POST /api/hardware/heartbeat": "Device heartbeat and status update",
-        "GET /api/hardware/door-command/:deviceId": "Get pending commands for device",
+        "GET /api/hardware/door-command/:deviceId":
+          "Get pending commands for device",
       },
       cards: {
         "GET /api/cards": "Get all authorized cards (with filtering)",
@@ -132,20 +140,29 @@ app.get("/api", (req, res) => {
     },
     websocket: {
       url: `ws://localhost:${process.env.PORT || 3000}`,
-      description: "Real-time updates for door activities, device status, and alerts",
+      description:
+        "Real-time updates for door activities, device status, and alerts",
       clientTypes: ["web", "arduino"],
       messageTypes: [
-        "RFID_ACCESS", "VIBRATION_ALERT", "DEVICE_STATUS", 
-        "DOOR_COMMAND", "WEB_CLIENT_REGISTER", "ARDUINO_CLIENT_REGISTER"
-      ]
+        "RFID_ACCESS",
+        "VIBRATION_ALERT",
+        "DEVICE_STATUS",
+        "DOOR_COMMAND",
+        "WEB_CLIENT_REGISTER",
+        "ARDUINO_CLIENT_REGISTER",
+      ],
     },
     database: {
       name: process.env.DB_NAME,
       tables: [
-        "admin", "authorized_cards", "log_aktivitas", 
-        "device_status", "door_commands", "kartu"
-      ]
-    }
+        "admin",
+        "authorized_cards",
+        "log_aktivitas",
+        "device_status",
+        "door_commands",
+        "kartu",
+      ],
+    },
   });
 });
 
@@ -154,15 +171,15 @@ app.get("/api/test/db", async (req, res) => {
   try {
     const db = require("./config/db");
     const [result] = await db.execute("SELECT 1 as test");
-    res.json({ 
-      database: "connected", 
+    res.json({
+      database: "connected",
       test: result[0].test,
-      database_name: process.env.DB_NAME 
+      database_name: process.env.DB_NAME,
     });
   } catch (error) {
-    res.status(500).json({ 
-      database: "error", 
-      message: error.message 
+    res.status(500).json({
+      database: "error",
+      message: error.message,
     });
   }
 });
@@ -172,7 +189,7 @@ app.use("*", (req, res) => {
   res.status(404).json({
     message: "Endpoint tidak ditemukan!",
     availableEndpoints: "/api for documentation",
-    requestedPath: req.originalUrl
+    requestedPath: req.originalUrl,
   });
 });
 
@@ -193,22 +210,22 @@ server.listen(PORT, () => {
   console.log(`🌐 WebSocket server: ws://localhost:${PORT}`);
   console.log(`✅ CORS enabled for multiple origins`);
   console.log(`📡 WebSocket clients: ${socketManager.getStats().total}`);
-  console.log(`🛠️  Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🛠️  Environment: ${process.env.NODE_ENV || "development"}`);
 });
 
 // Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received, shutting down gracefully');
+process.on("SIGTERM", () => {
+  console.log("SIGTERM received, shutting down gracefully");
   server.close(() => {
-    console.log('Process terminated');
+    console.log("Process terminated");
     process.exit(0);
   });
 });
 
-process.on('SIGINT', () => {
-  console.log('SIGINT received, shutting down gracefully');
+process.on("SIGINT", () => {
+  console.log("SIGINT received, shutting down gracefully");
   server.close(() => {
-    console.log('Process terminated');
+    console.log("Process terminated");
     process.exit(0);
   });
 });

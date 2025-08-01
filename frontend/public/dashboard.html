@@ -28,6 +28,11 @@
         Smart Door Lock
       </h1>
       <div class="flex items-center gap-3">
+        <!-- Connection Status Indicator -->
+        <div id="connectionStatus" class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-gray-500 rounded-full"></span>
+          <span class="text-gray-600 text-sm">Connecting...</span>
+        </div>
         <span id="userEmail" class="text-sm text-gray-600"></span>
         <button
           id="logoutBtn"
@@ -40,11 +45,7 @@
     </header>
 
     <div class="flex flex-1">
-<<<<<<< HEAD
-      <!-- SIDEBAR - UPDATED -->
-=======
       <!-- SIDEBAR -->
->>>>>>> 4dd9f2a915ab25cf51a486b3da11b1a7589fe378
       <aside class="w-60 bg-white border-r border-gray-200 shadow-sm">
         <nav class="flex flex-col p-4 gap-1">
           <a
@@ -54,23 +55,10 @@
             🏠 Beranda
           </a>
           <a
-<<<<<<< HEAD
             href="history.html"
             class="flex items-center gap-3 px-3 py-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-xl font-medium transition"
           >
             📊 History & Reports
-=======
-            href="log_activity.html"
-            class="flex items-center gap-3 px-3 py-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-xl font-medium transition"
-          >
-            📝 Log Activity
-          </a>
-          <a
-            href="history.html"
-            class="flex items-center gap-3 px-3 py-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-xl font-medium transition"
-          >
-            ⌚ History
->>>>>>> 4dd9f2a915ab25cf51a486b3da11b1a7589fe378
           </a>
           <a
             href="cards.html"
@@ -97,13 +85,15 @@
         </h2>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
-          <!-- STATUS PINTU -->
+          <!-- STATUS PINTU - Updated untuk sinkronisasi dengan remote control -->
           <div
             class="bg-white p-5 rounded-xl border border-gray-200 text-center shadow-sm hover:shadow transition"
           >
-            <p class="text-lg font-medium text-gray-700">Status Pintu</p>
-            <p id="statusPintu" class="text-2xl font-bold text-green-600 mt-1">
-              Tertutup
+            <p class="text-sm text-gray-500 font-medium">Status Pintu</p>
+            <div class="flex items-center justify-center gap-2 mt-2">
+              <div id="doorStatusIcon" class="text-2xl">🔒</div>
+              <p id="deviceLastUpdate" class="text-xs text-gray-400 mt-1">
+              Checking status...
             </p>
           </div>
 
@@ -122,52 +112,110 @@
             class="bg-white p-5 rounded-xl border border-gray-200 text-center shadow-sm hover:shadow transition"
           >
             <p class="text-sm text-gray-500 font-medium">Akses Terakhir</p>
-            <p id="doorTime" class="text-base text-gray-600 mt-1">12:30:45</p>
+            <p id="doorTime" class="text-base text-gray-600 mt-1">Loading...</p>
           </div>
         </div>
 
         <!-- GRAFIK AKSES -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <!-- Grafik Akses Mingguan -->
+          <!-- Grafik Akses Mingguan - Updated untuk menggunakan data history -->
           <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">
-              📊 Akses 7 Hari Terakhir
-            </h3>
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-semibold text-gray-800">
+                📊 Akses 7 Hari Terakhir
+              </h3>
+              <div class="text-xs text-gray-500">
+                Data dari History
+              </div>
+            </div>
             <div class="w-full h-64">
               <canvas id="weeklyChart"></canvas>
             </div>
           </div>
 
-          <!-- Grafik Status Akses -->
+          <!-- Grafik Status Akses - Updated untuk menggunakan data history -->
           <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">
-              📈 Status Akses Hari Ini
-            </h3>
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-semibold text-gray-800">
+                📈 Status Akses Hari Ini
+              </h3>
+              <div class="text-xs text-gray-500">
+                Real-time
+              </div>
+            </div>
             <div class="w-full h-64">
               <canvas id="statusChart"></canvas>
             </div>
           </div>
         </div>
 
+        <!-- DEVICE STATUS INDICATORS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <!-- Device Connection -->
+          <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="text-2xl">📡</div>
+              <div>
+                <p class="text-sm text-gray-500 font-medium">Device Status</p>
+                <p id="deviceStatusText" class="font-semibold text-gray-700">
+                  Checking...
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Last Heartbeat -->
+          <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="text-2xl">💓</div>
+              <div>
+                <p class="text-sm text-gray-500 font-medium">Last Heartbeat</p>
+                <p id="deviceHeartbeat" class="font-semibold text-gray-700">
+                  Never
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="text-2xl">⚡</div>
+              <div class="flex-1">
+                <p class="text-sm text-gray-500 font-medium">Quick Control</p>
+                <a 
+                  href="remote_control.html" 
+                  class="text-blue-600 hover:text-blue-700 font-semibold text-sm"
+                >
+                  Go to Remote Control →
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- AKTIVITAS TERBARU -->
         <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-<<<<<<< HEAD
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-semibold text-gray-800">
               🕒 Aktivitas Terbaru
             </h3>
-            <a
-              href="history.html"
-              class="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1"
-            >
-              View All History 📊
-            </a>
+            <div class="flex gap-2">
+              <a
+                href="history.html"
+                class="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1"
+              >
+                View All History 📊
+              </a>
+              <button
+                id="refreshActivityBtn"
+                class="text-gray-600 hover:text-gray-700 text-sm font-medium flex items-center gap-1"
+                onclick="fetchRecentActivity()"
+              >
+                🔄 Refresh
+              </button>
+            </div>
           </div>
-=======
-          <h3 class="text-lg font-semibold text-gray-800 mb-4">
-            🕒 Aktivitas Terbaru
-          </h3>
->>>>>>> 4dd9f2a915ab25cf51a486b3da11b1a7589fe378
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
               <thead class="bg-gray-50 text-gray-700 text-sm font-semibold">
@@ -176,6 +224,7 @@
                   <th class="p-3 border-b border-gray-200">Pengguna</th>
                   <th class="p-3 border-b border-gray-200">ID Kartu</th>
                   <th class="p-3 border-b border-gray-200">Status</th>
+                  <th class="p-3 border-b border-gray-200">Action</th>
                 </tr>
               </thead>
               <tbody
@@ -183,8 +232,21 @@
                 class="text-gray-800 divide-y divide-gray-100"
               >
                 <!-- Data akan diisi oleh JavaScript -->
+                <tr>
+                  <td colspan="5" class="p-4 text-center text-gray-500">
+                    Loading activity data...
+                  </td>
+                </tr>
               </tbody>
             </table>
+          </div>
+        </div>
+
+        <!-- REAL-TIME UPDATES INDICATOR -->
+        <div class="mt-6 text-center">
+          <div class="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm">
+            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+            <span>Real-time monitoring active</span>
           </div>
         </div>
       </main>
@@ -194,10 +256,17 @@
     <footer
       class="bg-white/90 backdrop-blur-sm text-center text-sm text-gray-500 py-2 border-t border-gray-200"
     >
-      © 2025 Smart Door Lock System
+      © 2025 Smart Door Lock System - Real-time Dashboard
     </footer>
 
     <!-- SCRIPT -->
     <script src="../src/dashboard.js"></script>
+    <p id="statusPintu" class="text-2xl font-bold text-red-600">
+      Terkunci
+    </p>
+    </div>
+    <p id="deviceLastUpdate" class="text-xs text-gray-400 mt-1">
+      Checking status...
+    </p>
   </body>
 </html>
