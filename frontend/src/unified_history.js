@@ -1,3 +1,8 @@
+// ============================================================================
+// UPDATED UNIFIED_HISTORY.JS - ENGLISH FIELD NAMES COMPATIBLE
+// frontend/src/unified_history.js - STEP 3 MIGRATION
+// ============================================================================
+
 document.addEventListener("DOMContentLoaded", () => {
   // DOM Elements
   const historyTableBody = document.getElementById("historyTableBody");
@@ -115,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Table sorting
+    // Table sorting - UPDATED FOR ENGLISH FIELDS
     document.querySelectorAll("[data-sort]").forEach((header) => {
       header.addEventListener("click", () => {
         const field = header.getAttribute("data-sort");
@@ -179,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Apply current filters
+  // Apply current filters - UPDATED FOR ENGLISH FIELDS
   function applyCurrentFilters() {
     filteredData = allData.filter((record) => {
       // Date filter
@@ -197,16 +202,16 @@ document.addEventListener("DOMContentLoaded", () => {
         if (recordDate > endDate.value) return false;
       }
 
-      // User filter
+      // User filter - UPDATED FIELD NAME
       if (userFilter.value.trim()) {
         const searchTerm = userFilter.value.toLowerCase().trim();
-        if (!record.pengguna.toLowerCase().includes(searchTerm)) return false;
+        if (!record.user_name.toLowerCase().includes(searchTerm)) return false;
       }
 
-      // Card filter
+      // Card filter - UPDATED FIELD NAME
       if (cardFilter.value.trim()) {
         const searchTerm = cardFilter.value.toLowerCase().trim();
-        if (!record.kartu_id.toLowerCase().includes(searchTerm)) return false;
+        if (!record.card_id.toLowerCase().includes(searchTerm)) return false;
       }
 
       // Status filter
@@ -361,7 +366,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updatePagination();
   }
 
-  // Create table row
+  // Create table row - UPDATED FOR ENGLISH FIELDS
   function createTableRow(record, rowNumber) {
     const row = document.createElement("tr");
     row.className = "hover:bg-gray-50";
@@ -379,7 +384,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const statusBadge = getStatusBadge(record.status);
-    const description = record.keterangan || "Door access";
+    const description = record.description || "Door access"; // UPDATED FIELD NAME
 
     row.innerHTML = `
       <td class="p-4">
@@ -390,10 +395,10 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="text-sm text-gray-500">${timeStr}</div>
       </td>
       <td class="p-4">
-        <div class="font-medium">${record.pengguna}</div>
+        <div class="font-medium">${record.user_name}</div>
       </td>
       <td class="p-4">
-        <div class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">${record.kartu_id}</div>
+        <div class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">${record.card_id}</div>
       </td>
       <td class="p-4">${statusBadge}</td>
       <td class="p-4">
@@ -431,7 +436,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  // Show record details
+  // Show record details - UPDATED FOR ENGLISH FIELDS
   window.showDetails = function (logId) {
     const record = allData.find((r) => r.id_log == logId);
     if (!record) return;
@@ -461,12 +466,12 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
         <div class="flex justify-between">
           <span class="font-medium text-gray-700">User:</span>
-          <span class="font-semibold">${record.pengguna}</span>
+          <span class="font-semibold">${record.user_name}</span>
         </div>
         <div class="flex justify-between">
           <span class="font-medium text-gray-700">Card ID:</span>
           <span class="font-mono text-sm bg-blue-100 px-2 py-1 rounded">${
-            record.kartu_id
+            record.card_id
           }</span>
         </div>
         <div class="flex justify-between">
@@ -476,7 +481,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="flex justify-between">
           <span class="font-medium text-gray-700">Description:</span>
           <span class="text-right max-w-xs">${
-            record.keterangan || "Door access"
+            record.description || "Door access"
           }</span>
         </div>
         ${
@@ -569,14 +574,14 @@ document.addEventListener("DOMContentLoaded", () => {
     return span;
   }
 
-  // Update statistics
+  // Update statistics - UPDATED FOR ENGLISH FIELDS
   function updateStatistics() {
     const total = filteredData.length;
     const successful = filteredData.filter(
       (r) => r.status === "berhasil"
     ).length;
     const failed = filteredData.filter((r) => r.status === "gagal").length;
-    const users = new Set(filteredData.map((r) => r.pengguna)).size;
+    const users = new Set(filteredData.map((r) => r.user_name)).size; // UPDATED FIELD NAME
 
     totalRecords.textContent = total;
     successfulAccess.textContent = successful;
@@ -584,7 +589,7 @@ document.addEventListener("DOMContentLoaded", () => {
     uniqueUsers.textContent = users;
   }
 
-  // Export to PDF
+  // Export to PDF - UPDATED FOR ENGLISH FIELDS
   async function exportToPDF() {
     const loadingSpinner = exportPdfBtn.querySelector(".loading");
     const originalText = exportPdfBtn.textContent;
@@ -629,13 +634,13 @@ document.addEventListener("DOMContentLoaded", () => {
         yPos += 6;
       }
 
-      // Prepare table data
+      // Prepare table data - UPDATED FOR ENGLISH FIELDS
       const tableData = filteredData.map((record) => [
         new Date(record.created_at).toLocaleString("id-ID"),
-        record.pengguna,
-        record.kartu_id,
+        record.user_name, // UPDATED FIELD NAME
+        record.card_id,   // UPDATED FIELD NAME
         record.status.toUpperCase(),
-        record.keterangan || "Door access",
+        record.description || "Door access", // UPDATED FIELD NAME
       ]);
 
       // Add table
@@ -678,7 +683,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Generate monthly report
+  // Generate monthly report - UPDATED FOR ENGLISH FIELDS
   async function generateMonthlyReport() {
     try {
       const { jsPDF } = window.jspdf;
@@ -714,7 +719,7 @@ document.addEventListener("DOMContentLoaded", () => {
         total: monthlyData.length,
         successful: monthlyData.filter((r) => r.status === "berhasil").length,
         failed: monthlyData.filter((r) => r.status === "gagal").length,
-        uniqueUsers: new Set(monthlyData.map((r) => r.pengguna)).size,
+        uniqueUsers: new Set(monthlyData.map((r) => r.user_name)).size, // UPDATED FIELD NAME
       };
 
       doc.setFontSize(12);
@@ -771,13 +776,13 @@ document.addEventListener("DOMContentLoaded", () => {
         headStyles: { fillColor: [59, 130, 246] },
       });
 
-      // Top users
+      // Top users - UPDATED FOR ENGLISH FIELDS
       const userStats = {};
       monthlyData.forEach((record) => {
-        if (!userStats[record.pengguna]) {
-          userStats[record.pengguna] = 0;
+        if (!userStats[record.user_name]) { // UPDATED FIELD NAME
+          userStats[record.user_name] = 0;
         }
-        userStats[record.pengguna]++;
+        userStats[record.user_name]++;
       });
 
       const topUsers = Object.entries(userStats)
