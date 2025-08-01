@@ -68,9 +68,9 @@ exports.getHistory = async (req, res) => {
     res.json(rows);
   } catch (err) {
     console.error("Error ambil history:", err);
-    res.status(500).json({
+    res.status(500).json({ 
       message: "Gagal ambil data history",
-      error: err.message,
+      error: err.message 
     });
   }
 };
@@ -102,7 +102,7 @@ exports.getDoorStatus = async (req, res) => {
     // Ambil status device
     const [deviceStatus] = await db.execute(
       "SELECT * FROM device_status WHERE device_id = ? ORDER BY last_heartbeat DESC LIMIT 1",
-      [process.env.DEFAULT_DEVICE_ID || "MAIN_DOOR"]
+      [process.env.DEFAULT_DEVICE_ID || 'MAIN_DOOR']
     );
 
     // Response data
@@ -112,10 +112,8 @@ exports.getDoorStatus = async (req, res) => {
       total_akses_hari_ini: todayAccess[0].total,
       last_user: latestLog.length > 0 ? latestLog[0].pengguna : null,
       last_card_id: latestLog.length > 0 ? latestLog[0].kartu_id : null,
-      device_status:
-        deviceStatus.length > 0 ? deviceStatus[0].status : "offline",
-      last_heartbeat:
-        deviceStatus.length > 0 ? deviceStatus[0].last_heartbeat : null,
+      device_status: deviceStatus.length > 0 ? deviceStatus[0].status : 'offline',
+      last_heartbeat: deviceStatus.length > 0 ? deviceStatus[0].last_heartbeat : null
     };
 
     res.status(200).json(response);
@@ -173,8 +171,9 @@ exports.getActivityStats = async (req, res) => {
     res.json({
       weekly_stats: weeklyStats,
       hourly_stats: hourlyStats,
-      top_users: topUsers,
+      top_users: topUsers
     });
+
   } catch (err) {
     console.error("Error mengambil statistik aktivitas:", err);
     res.status(500).json({
