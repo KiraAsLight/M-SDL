@@ -1,8 +1,3 @@
-// ============================================================================
-// UPDATED UNIFIED_HISTORY.JS - ENGLISH FIELD NAMES COMPATIBLE
-// frontend/src/unified_history.js - STEP 3 MIGRATION
-// ============================================================================
-
 document.addEventListener("DOMContentLoaded", () => {
   // DOM Elements
   const historyTableBody = document.getElementById("historyTableBody");
@@ -390,6 +385,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <td class="p-4">
         <input type="checkbox" class="rounded" data-id="${record.id_log}">
       </td>
+      <td class="p-4 text-center">${rowNumber}</td>
       <td class="p-4">
         <div class="font-medium">${dateStr}</div>
         <div class="text-sm text-gray-500">${timeStr}</div>
@@ -412,6 +408,12 @@ document.addEventListener("DOMContentLoaded", () => {
           class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition"
         >
           👁️ Details
+        </button>
+        <button 
+          onclick="deleteRecord('${record.id_log}')"
+          class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-medium transition"
+        >
+          🗑️ Delete
         </button>
       </td>
     `;
@@ -498,6 +500,31 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     detailModal.classList.remove("hidden");
+  };
+
+  window.deleteRecord = async function (logId) {
+    const confirmed = confirm("Yakin mau hapus data ini?");
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch(`${API_BASE}/door/history/${logId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Gagal menghapus data.");
+      }
+
+      showSuccess("Data berhasil dihapus.");
+      // Refresh data
+      loadHistoryData();
+    } catch (err) {
+      console.error(err);
+      showError("Terjadi kesalahan saat menghapus data.");
+    }
   };
 
   // Update results info
@@ -638,7 +665,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const tableData = filteredData.map((record) => [
         new Date(record.created_at).toLocaleString("id-ID"),
         record.user_name, // UPDATED FIELD NAME
-        record.card_id,   // UPDATED FIELD NAME
+        record.card_id, // UPDATED FIELD NAME
         record.status.toUpperCase(),
         record.description || "Door access", // UPDATED FIELD NAME
       ]);
@@ -779,7 +806,8 @@ document.addEventListener("DOMContentLoaded", () => {
       // Top users - UPDATED FOR ENGLISH FIELDS
       const userStats = {};
       monthlyData.forEach((record) => {
-        if (!userStats[record.user_name]) { // UPDATED FIELD NAME
+        if (!userStats[record.user_name]) {
+          // UPDATED FIELD NAME
           userStats[record.user_name] = 0;
         }
         userStats[record.user_name]++;

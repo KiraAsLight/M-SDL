@@ -43,12 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loadDeviceStatus();
   }, 30000);
 
-  // WebSocket heartbeat (ping every 30 seconds)
-  setInterval(() => {
-    if (websocket && websocket.readyState === WebSocket.OPEN) {
-      websocket.send(JSON.stringify({ type: "PING" }));
-    }
-  }, 30000);
 });
 
 function checkAuthentication() {
@@ -124,6 +118,7 @@ function handleWebSocketMessage(data) {
       break;
     case "VIBRATION_ALERT":
       handleVibrationAlert(data);
+      handleVibrationAlertForDashboard(data);
       break;
     case "DEVICE_STATUS":
       handleDeviceStatus(data);
@@ -176,6 +171,14 @@ function handleVibrationAlert(data) {
   showNotification(`Security Alert: ${data.message}`, type);
 }
 
+// Handle vibration alerts for dashboard
+function handleVibrationAlertForDashboard(data) {
+  const vibrationValueDashboard = document.getElementById("vibrationValueDashboard");
+  if (vibrationValueDashboard) {
+    vibrationValueDashboard.textContent = data.intensity || data.value || "-";
+  }
+}
+
 // Handle device status updates
 function handleDeviceStatus(data) {
   updateDeviceStatusDisplay(data);
@@ -184,7 +187,10 @@ function handleDeviceStatus(data) {
 // Handle command responses
 function handleCommandResponse(data) {
   if (data.success) {
-    showNotification(data.message || "Command executed successfully", "success");
+    showNotification(
+      data.message || "Command executed successfully",
+      "success"
+    );
     // Refresh door status after command
     setTimeout(() => {
       loadDeviceStatus();
@@ -200,9 +206,7 @@ function updateDeviceStatusDisplay(data) {
   // Update door status (simplified logic)
   const statusPintuEl = document.getElementById("statusPintu");
   const doorStatusIcon = document.getElementById("doorStatusIcon");
-  const deviceLastUpdate = document.getElementById("deviceLastUpdate");
   const deviceStatusText = document.getElementById("deviceStatusText");
-  const deviceHeartbeat = document.getElementById("deviceHeartbeat");
 
   if (statusPintuEl && doorStatusIcon) {
     const isOnline = data.status === "online" || data.isOnline;
@@ -216,12 +220,13 @@ function updateDeviceStatusDisplay(data) {
       statusPintuEl.className = "text-2xl font-bold text-gray-600";
       doorStatusIcon.textContent = "📵";
     }
+  }
 
-    if (deviceLastUpdate) {
-      deviceLastUpdate.textContent = data.lastHeartbeat
-        ? `Updated: ${new Date(data.lastHeartbeat).toLocaleString("id-ID")}`
-        : "Never connected";
-    }
+  // Update Sensor Data
+  const sensors = data.sensors || {};
+  if (vibrationValueDashboard) {
+    vibrationValueDashboard.textContent =
+      sensors.vibration !== undefined ? sensors.vibration : "-";
   }
 
   // Update device connection status indicators
@@ -237,21 +242,6 @@ function updateDeviceStatusDisplay(data) {
     }
   }
 
-  if (deviceHeartbeat) {
-    if (data.lastHeartbeat) {
-      const timeDiff = data.timeSinceLastHeartbeat || 0;
-      if (timeDiff < 60) {
-        deviceHeartbeat.textContent = `${timeDiff}s ago`;
-      } else if (timeDiff < 3600) {
-        deviceHeartbeat.textContent = `${Math.floor(timeDiff / 60)}m ago`;
-      } else {
-        deviceHeartbeat.textContent = `${Math.floor(timeDiff / 3600)}h ago`;
-      }
-    } else {
-      deviceHeartbeat.textContent = "Never";
-    }
-  }
-
   // Update connection status
   updateConnectionStatus(data.status === "online" || data.isOnline);
 }
@@ -262,11 +252,14 @@ async function loadDeviceStatus() {
   if (!token) return;
 
   try {
-    const response = await fetch(`${API_BASE}/remote/device-status/${DEVICE_ID}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(
+      `${API_BASE}/remote/device-status/${DEVICE_ID}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -279,7 +272,6 @@ async function loadDeviceStatus() {
     // Set default offline status
     updateDoorStatusFromDevice({
       status: "offline",
-      lastHeartbeat: null,
       isOnline: false,
     });
   }
@@ -289,8 +281,7 @@ async function loadDeviceStatus() {
 function updateDoorStatusFromDevice(data) {
   const statusPintuEl = document.getElementById("statusPintu");
   const doorStatusIcon = document.getElementById("doorStatusIcon");
-  const deviceLastUpdate = document.getElementById("deviceLastUpdate");
-  
+
   if (!statusPintuEl || !doorStatusIcon) return;
 
   const isOnline = data.status === "online" || data.isOnline;
@@ -305,12 +296,6 @@ function updateDoorStatusFromDevice(data) {
     doorStatusIcon.textContent = "📵";
   }
 
-  if (deviceLastUpdate) {
-    deviceLastUpdate.textContent = data.lastHeartbeat
-      ? `Updated: ${new Date(data.lastHeartbeat).toLocaleString("id-ID")}`
-      : "Never connected";
-  }
-
   // Update connection status indicator
   updateConnectionStatus(isOnline);
 }
@@ -319,7 +304,7 @@ function updateDoorStatusFromDevice(data) {
 function updateDoorStatusFromAccess(data) {
   const statusPintuEl = document.getElementById("statusPintu");
   const doorStatusIcon = document.getElementById("doorStatusIcon");
-  
+
   if (!statusPintuEl || !doorStatusIcon) return;
 
   if (data.status === "berhasil") {
@@ -377,7 +362,9 @@ function updateDashboardCards(data) {
 
   if (data && data.length > 0) {
     // Ambil data terbaru (berdasarkan created_at)
-    const sortedData = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const sortedData = data.sort(
+      (a, b) => new Date(b.created_at) - new Date(a.created_at)
+    );
     const latestLog = sortedData[0];
 
     // Format waktu dari log terbaru
@@ -554,7 +541,11 @@ function createStatusChart(data) {
   const gagal = todayData.filter((log) => {
     const status = (log.status || "").toLowerCase();
     const description = (log.description || "").toLowerCase(); // UPDATED FIELD NAME
-    return status === "gagal" || description.includes("gagal") || description.includes("ditolak");
+    return (
+      status === "gagal" ||
+      description.includes("gagal") ||
+      description.includes("ditolak")
+    );
   }).length;
 
   const pending = todayData.filter((log) => {
@@ -670,7 +661,7 @@ function renderRecentActivity(data) {
     return;
   }
 
-  data.forEach((log) => {
+  data.forEach((log, index) => {
     const waktu = new Date(log.created_at);
     const waktuStr = waktu.toLocaleString("id-ID", {
       hour: "2-digit",
@@ -692,6 +683,7 @@ function renderRecentActivity(data) {
 
     const row = `
       <tr class="hover:bg-gray-50">
+        <td class="p-3">${index + 1}</td>
         <td class="p-3">${waktuStr}</td>
         <td class="p-3">${log.user_name || "N/A"}</td>
         <td class="p-3">${log.card_id || "N/A"}</td>
@@ -853,5 +845,5 @@ window.dashboardDebug = {
   fetchWeeklyData,
   fetchRecentActivity,
   updateDeviceStatusDisplay,
-  websocket
+  websocket,
 };

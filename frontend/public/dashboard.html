@@ -21,26 +21,25 @@
   <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col antialiased">
     <!-- HEADER -->
     <header
-      class="bg-white/90 backdrop-blur-sm p-4 flex justify-between items-center border-b border-gray-200 shadow-sm"
+      class="bg-white p-4 flex justify-between items-center border-b border-gray-200 shadow-sm"
     >
-      <h1 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+      <div class="flex items-center gap-2">
         <span class="text-red-500">🔒</span>
-        Smart Door Lock
-      </h1>
+        <h1 class="text-xl font-bold text-gray-900">Smart Door Lock</h1>
+      </div>
       <div class="flex items-center gap-3">
-        <!-- Connection Status Indicator -->
+        <!-- Idikator Status Koneksi -->
         <div id="connectionStatus" class="flex items-center gap-2">
-          <span class="w-2 h-2 bg-gray-500 rounded-full"></span>
-          <span class="text-gray-600 text-sm">Connecting...</span>
+          <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+          <span class="text-green-600 text-sm">Connected</span>
         </div>
-        <span id="userEmail" class="text-sm text-gray-600"></span>
+        <span id="userEmail" class="text-sm text-gray-600">Live: </span>
         <button
           id="logoutBtn"
           class="text-sm bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-lg font-semibold transition duration-200 shadow-sm hover:shadow"
         >
           Logout
         </button>
-        <span class="text-gray-500 text-xl">👤</span>
       </div>
     </header>
 
@@ -52,25 +51,25 @@
             href="dashboard.html"
             class="flex items-center gap-3 px-3 py-3 text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl font-medium shadow-sm transition"
           >
-            🏠 Beranda
+            🏠 Dashboard
           </a>
           <a
             href="history.html"
             class="flex items-center gap-3 px-3 py-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-xl font-medium transition"
           >
-            📊 History & Reports
+            📊 Log & History
           </a>
           <a
             href="cards.html"
             class="flex items-center gap-3 px-3 py-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-xl font-medium transition"
           >
-            💳 Kartu RFID
+            💳 Data Kartu
           </a>
           <a
             href="remote_control.html"
             class="flex items-center gap-3 px-3 py-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-xl font-medium transition"
           >
-            🎮 Remote Control
+            🎮 Kontrol Pintu
           </a>
         </nav>
       </aside>
@@ -81,20 +80,21 @@
           class="text-2xl font-semibold mb-6 text-gray-900 flex items-center gap-2"
         >
           <span class="text-blue-600">🏠</span>
-          Dashboard Overview
+          Dashboard
         </h2>
 
+        <!-- STATUS PINTU -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
-          <!-- STATUS PINTU - Updated untuk sinkronisasi dengan remote control -->
           <div
             class="bg-white p-5 rounded-xl border border-gray-200 text-center shadow-sm hover:shadow transition"
           >
             <p class="text-sm text-gray-500 font-medium">Status Pintu</p>
             <div class="flex items-center justify-center gap-2 mt-2">
-              <div id="doorStatusIcon" class="text-2xl">🔒</div>
+              <div id="doorStatusIcon" class="text-2xl text-red-500">🔒</div>
               <p id="deviceLastUpdate" class="text-xs text-gray-400 mt-1">
-              Checking status...
-            </p>
+                Checking status...
+              </p>
+            </div>
           </div>
 
           <!-- JUMLAH AKSES -->
@@ -118,7 +118,7 @@
 
         <!-- GRAFIK AKSES -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <!-- Grafik Akses Mingguan - Updated untuk menggunakan data history -->
+          <!-- Grafik Akses Mingguan -->
           <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-semibold text-gray-800">
@@ -133,7 +133,7 @@
             </div>
           </div>
 
-          <!-- Grafik Status Akses - Updated untuk menggunakan data history -->
+          <!-- Grafik Status Akses -->
           <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-semibold text-gray-800">
@@ -149,29 +149,29 @@
           </div>
         </div>
 
-        <!-- DEVICE STATUS INDICATORS -->
+        <!-- Idikator Status Pintu -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <!-- Device Connection -->
+          <!-- Koneksi Status -->
           <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
             <div class="flex items-center gap-3">
-              <div class="text-2xl">📡</div>
+              <div class="text-2xl text-green-500">📡</div>
               <div>
-                <p class="text-sm text-gray-500 font-medium">Device Status</p>
-                <p id="deviceStatusText" class="font-semibold text-gray-700">
-                  Checking...
+                <p class="text-sm text-gray-500 font-medium">Status Koneksi</p>
+                <p id="deviceStatusText" class="font-semibold text-green-700">
+                  -
                 </p>
               </div>
             </div>
           </div>
 
-          <!-- Last Heartbeat -->
+          <!-- Getaran -->
           <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
             <div class="flex items-center gap-3">
-              <div class="text-2xl">💓</div>
+              <div class="text-2xl text-blue-500">📳</div>
               <div>
-                <p class="text-sm text-gray-500 font-medium">Last Heartbeat</p>
-                <p id="deviceHeartbeat" class="font-semibold text-gray-700">
-                  Never
+                <p class="text-sm text-gray-500 font-medium">Getaran</p>
+                <p id="vibrationValueDashboard" class="font-semibold text-blue-700">
+                  -
                 </p>
               </div>
             </div>
@@ -180,14 +180,14 @@
           <!-- Quick Actions -->
           <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
             <div class="flex items-center gap-3">
-              <div class="text-2xl">⚡</div>
+              <div class="text-2xl text-yellow-500">⚡</div>
               <div class="flex-1">
-                <p class="text-sm text-gray-500 font-medium">Quick Control</p>
+                <p class="text-sm text-gray-500 font-medium">Kontrol Cepat</p>
                 <a 
                   href="remote_control.html" 
                   class="text-blue-600 hover:text-blue-700 font-semibold text-sm"
                 >
-                  Go to Remote Control →
+                  Menuju Kontrol Pintu →
                 </a>
               </div>
             </div>
@@ -205,7 +205,7 @@
                 href="history.html"
                 class="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1"
               >
-                View All History 📊
+                Lihat Semua Hisotry 📊
               </a>
               <button
                 id="refreshActivityBtn"
@@ -217,9 +217,10 @@
             </div>
           </div>
           <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+            <table class="w-full text-center border-collapse">
               <thead class="bg-gray-50 text-gray-700 text-sm font-semibold">
                 <tr>
+                  <th class="p-3 border-b border-gray-200">No</th>
                   <th class="p-3 border-b border-gray-200">Waktu</th>
                   <th class="p-3 border-b border-gray-200">Pengguna</th>
                   <th class="p-3 border-b border-gray-200">ID Kartu</th>
@@ -256,17 +257,10 @@
     <footer
       class="bg-white/90 backdrop-blur-sm text-center text-sm text-gray-500 py-2 border-t border-gray-200"
     >
-      © 2025 Smart Door Lock System - Real-time Dashboard
+      Smart Door Lock System - Real Time © 2025 Kira As-Syafi'iyah
     </footer>
 
     <!-- SCRIPT -->
     <script src="../src/dashboard.js"></script>
-    <p id="statusPintu" class="text-2xl font-bold text-red-600">
-      Terkunci
-    </p>
-    </div>
-    <p id="deviceLastUpdate" class="text-xs text-gray-400 mt-1">
-      Checking status...
-    </p>
   </body>
 </html>

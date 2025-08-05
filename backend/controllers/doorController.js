@@ -68,9 +68,9 @@ exports.getHistory = async (req, res) => {
     res.json(rows);
   } catch (err) {
     console.error("Error ambil history:", err);
-    res.status(500).json({ 
+    res.status(500).json({
       message: "Gagal ambil data history",
-      error: err.message 
+      error: err.message,
     });
   }
 };
@@ -123,37 +123,37 @@ exports.getDoorStatus = async (req, res) => {
       WHERE device_id = ? 
       ORDER BY last_heartbeat DESC 
       LIMIT 1`,
-      [process.env.DEFAULT_DEVICE_ID || 'MAIN_DOOR']
+      [process.env.DEFAULT_DEVICE_ID || "MAIN_DOOR"]
     );
 
     // Tentukan status device berdasarkan heartbeat
     let deviceInfo = {
-      device_id: process.env.DEFAULT_DEVICE_ID || 'MAIN_DOOR',
-      status: 'offline',
+      device_id: process.env.DEFAULT_DEVICE_ID || "MAIN_DOOR",
+      status: "offline",
       is_online: false,
       last_heartbeat: null,
       seconds_since_heartbeat: null,
-      sensors: null
+      sensors: null,
     };
 
     if (deviceStatus.length > 0) {
       const device = deviceStatus[0];
       const isOnline = device.seconds_since_heartbeat < 120; // 2 minutes timeout
-      
+
       deviceInfo = {
         device_id: device.device_id,
-        status: isOnline ? device.status : 'offline',
+        status: isOnline ? device.status : "offline",
         is_online: isOnline,
         last_heartbeat: device.last_heartbeat,
         seconds_since_heartbeat: device.seconds_since_heartbeat,
-        sensors: device.sensors_data ? JSON.parse(device.sensors_data) : null
+        sensors: device.sensors_data ? JSON.parse(device.sensors_data) : null,
       };
     }
 
     // Tentukan status pintu berdasarkan device status dan log terbaru
     let doorStatus = "Unknown";
     let doorIcon = "❓";
-    
+
     if (deviceInfo.is_online) {
       doorStatus = "Terkunci"; // Default untuk device online
       doorIcon = "🔒";
@@ -167,30 +167,30 @@ exports.getDoorStatus = async (req, res) => {
       // Status pintu
       door_status: doorStatus,
       door_icon: doorIcon,
-      
+
       // Device info
       device: deviceInfo,
-      
+
       // Latest access info - UPDATED FIELD NAMES
       latest_access: {
         timestamp: latestLog.length > 0 ? latestLog[0].created_at : null,
         user: latestLog.length > 0 ? latestLog[0].user_name : null,
         card_id: latestLog.length > 0 ? latestLog[0].card_id : null,
         status: latestLog.length > 0 ? latestLog[0].status : null,
-        description: latestLog.length > 0 ? latestLog[0].description : null
+        description: latestLog.length > 0 ? latestLog[0].description : null,
       },
-      
+
       // Today's statistics
       today_stats: {
         total_access: todayAccess[0].total,
         successful: todayStats[0].successful || 0,
         failed: todayStats[0].failed || 0,
-        pending: todayStats[0].pending || 0
+        pending: todayStats[0].pending || 0,
       },
-      
+
       // Metadata
       timestamp: new Date().toISOString(),
-      timezone: 'Asia/Jakarta'
+      timezone: "Asia/Jakarta",
     };
 
     res.status(200).json(response);
@@ -279,9 +279,8 @@ exports.getActivityStats = async (req, res) => {
       top_users: topUsers,
       monthly_stats: monthlyStats,
       card_stats: cardStats[0],
-      generated_at: new Date().toISOString()
+      generated_at: new Date().toISOString(),
     });
-
   } catch (err) {
     console.error("Error mengambil statistik aktivitas:", err);
     res.status(500).json({
@@ -295,9 +294,10 @@ exports.getActivityStats = async (req, res) => {
 exports.getDashboardSummary = async (req, res) => {
   try {
     const today = new Date().toISOString().split("T")[0];
-    
+
     // Query gabungan untuk efisiensi - UPDATED FIELD NAMES
-    const [summary] = await db.execute(`
+    const [summary] = await db.execute(
+      `
       SELECT 
         (SELECT COUNT(*) FROM log_aktivitas WHERE DATE(created_at) = ?) as today_total,
         (SELECT COUNT(*) FROM log_aktivitas WHERE DATE(created_at) = ? AND status = 'berhasil') as today_successful,
@@ -305,7 +305,9 @@ exports.getDashboardSummary = async (req, res) => {
         (SELECT COUNT(*) FROM log_aktivitas WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)) as week_total,
         (SELECT COUNT(DISTINCT user_name) FROM log_aktivitas WHERE DATE(created_at) = ?) as today_unique_users,
         (SELECT COUNT(*) FROM authorized_cards WHERE is_active = 1) as active_cards
-    `, [today, today, today, today]);
+    `,
+      [today, today, today, today]
+    );
 
     // Latest activity - UPDATED FIELD NAMES
     const [latestActivity] = await db.execute(
@@ -325,23 +327,44 @@ exports.getDashboardSummary = async (req, res) => {
       WHERE device_id = ?
       ORDER BY last_heartbeat DESC 
       LIMIT 1`,
-      [process.env.DEFAULT_DEVICE_ID || 'MAIN_DOOR']
+      [process.env.DEFAULT_DEVICE_ID || "MAIN_DOOR"]
     );
 
-    const isDeviceOnline = deviceStatus.length > 0 && deviceStatus[0].seconds_since_heartbeat < 120;
+    const isDeviceOnline =
+      deviceStatus.length > 0 && deviceStatus[0].seconds_since_heartbeat < 120;
 
     res.json({
       summary: summary[0],
       latest_activity: latestActivity,
       device_online: isDeviceOnline,
       device_status: deviceStatus[0] || null,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (err) {
     console.error("Error mengambil dashboard summary:", err);
     res.status(500).json({
       message: "Gagal mengambil dashboard summary",
+      error: err.message,
+    });
+  }
+};
+
+exports.deleteLog = async (req, res) => {
+  const { id_log } = req.params;
+  try {
+    const [result] = await db.execute(
+      "DELETE FROM log_aktivitas WHERE id_log = ?",
+      [id_log]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Log aktivitas tidak ditemukan" });
+    }
+
+    res.json({ message: "Log aktivitas berhasil dihapus" });
+  } catch (err) {
+    console.error("Gagal menghapus data log", err);
+    res.status(500).json({
+      message: "Terjadi kesalahan saat menghapus data log.",
       error: err.message,
     });
   }

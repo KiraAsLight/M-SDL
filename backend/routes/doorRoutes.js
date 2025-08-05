@@ -14,7 +14,10 @@ router.get("/status", doorController.getDoorStatus);
 // Route Statistics (enhanced)
 router.get("/statistics", doorController.getActivityStats);
 
-// NEW: Route untuk Dashboard Summary (lebih ringkas dan cepat)
+// Route untuk Dashboard Summary (lebih ringkas dan cepat)
 router.get("/dashboard-summary", doorController.getDashboardSummary);
+
+// Route untuk menghapus log aktivitas
+router.delete("/history/:id_log", doorController.deleteLog);
 
 module.exports = router;
