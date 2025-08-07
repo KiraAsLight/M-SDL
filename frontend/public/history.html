@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>History & Reports</title>
+    <title>Log & History</title>
     <!-- Tailwind CSS -->
     <link rel="stylesheet" href="./styles/output.css" />
     <!-- Font Elegant -->
@@ -76,19 +76,19 @@
             href="history.html"
             class="flex items-center gap-3 px-3 py-3 text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl font-medium shadow-sm transition"
           >
-            📊 History & Reports
+            📊 Log & History
           </a>
           <a
             href="cards.html"
             class="flex items-center gap-3 px-3 py-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-xl font-medium transition"
           >
-            💳 Kartu RFID
+            💳 Data Kartu
           </a>
           <a
             href="remote_control.html"
             class="flex items-center gap-3 px-3 py-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-xl font-medium transition"
           >
-            🎮 Remote Control
+            🎮 Kontrol Pintu
           </a>
         </nav>
       </aside>
@@ -99,7 +99,7 @@
           <h2
             class="text-2xl font-semibold text-gray-900 flex items-center gap-2"
           >
-            📊 History & Reports
+            📊 Log & History
           </h2>
           <div class="flex gap-3">
             <button
@@ -162,7 +162,7 @@
           class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-6"
         >
           <h3 class="text-lg font-semibold text-gray-800 mb-4">
-            🔍 Advanced Filters
+            🔍 Filters
           </h3>
 
           <div
@@ -171,7 +171,7 @@
             <!-- Date Range Filter -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2"
-                >Date Range</label
+                >Range Tanggal</label
               >
               <div class="flex gap-2">
                 <input
@@ -192,7 +192,7 @@
               <label
                 for="userFilter"
                 class="block text-sm font-medium text-gray-700 mb-2"
-                >User Name</label
+                >Pengguna</label
               >
               <input
                 type="text"
@@ -207,7 +207,7 @@
               <label
                 for="cardFilter"
                 class="block text-sm font-medium text-gray-700 mb-2"
-                >Card ID</label
+                >ID Kartu</label
               >
               <input
                 type="text"
@@ -222,13 +222,13 @@
               <label
                 for="statusFilter"
                 class="block text-sm font-medium text-gray-700 mb-2"
-                >Access Status</label
+                >Akses Status</label
               >
               <select
                 id="statusFilter"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">All Status</option>
+                <option value="">Semua Status</option>
                 <option value="berhasil">Successful</option>
                 <option value="gagal">Failed</option>
                 <option value="pending">Pending</option>
@@ -239,31 +239,31 @@
           <!-- Quick Date Filters -->
           <div class="flex flex-wrap gap-2 mb-4">
             <span class="text-sm font-medium text-gray-700"
-              >Quick Filters:</span
+              >Filter Cepaat:</span
             >
             <button
               id="todayFilter"
               class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm hover:bg-blue-200 transition"
             >
-              Today
+              Hari Ini
             </button>
             <button
               id="weekFilter"
               class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm hover:bg-blue-200 transition"
             >
-              This Week
+              Minggu Ini
             </button>
             <button
               id="monthFilter"
               class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm hover:bg-blue-200 transition"
             >
-              This Month
+              Bulan Ini
             </button>
             <button
               id="lastMonthFilter"
               class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm hover:bg-blue-200 transition"
             >
-              Last Month
+              Tahun Terakhir
             </button>
             <button
               id="clearFilters"
@@ -302,12 +302,13 @@
             </div>
             <div class="flex items-center gap-4">
               <label for="recordsPerPage" class="text-sm text-gray-600"
-                >Records per page:</label
+                >Records per halaman:</label
               >
               <select
                 id="recordsPerPage"
                 class="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
+                <option value="5">5</option>
                 <option value="25" selected>25</option>
                 <option value="50">50</option>
                 <option value="100">100</option>
@@ -333,21 +334,21 @@
                     class="p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100"
                     data-sort="created_at"
                   >
-                    Date & Time
+                    Tanggal & Waktu
                     <span class="sort-indicator">↕️</span>
                   </th>
                   <th
                     class="p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100"
                     data-sort="user_name"
                   >
-                    User
+                    Pengguna
                     <span class="sort-indicator">↕️</span>
                   </th>
                   <th
                     class="p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100"
                     data-sort="card_id"
                   >
-                    Card ID
+                    ID Kartu
                     <span class="sort-indicator">↕️</span>
                   </th>
                   <th
